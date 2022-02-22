@@ -33,7 +33,6 @@ class TurtleBot:
         self.pose_subscriber = rospy.Subscriber('/odom',
                                                 Odometry,
                                                 self.update_pose)
-
         #the desired target coordinates
         self.goal_posex = -20
         self.goal_posey = -20
@@ -46,7 +45,7 @@ class TurtleBot:
         self.rate = rospy.Rate(30)
 
     def update_pose(self, data):
-        """Callback function which is called when a new message of type Pose is
+        """Callback function which is called when a new message of type Odometry is
         received by the subscriber."""
         self.posex = round(data.pose.pose.position.x, 4)
         self.posey = round(data.pose.pose.position.y, 4)
@@ -70,22 +69,22 @@ class TurtleBot:
 
     def single_Iterate(self, k=0.1):
         """Single Integrator model"""
-
         posedist = self.distance()
         xdist = posedist[0]
         ydist = posedist[1]
         ux = xdist * k
         uy = ydist * k
+
         return [[ux], [uy]]
 
     def unicycle_Steer(self, k=0.1, l=1):
         """ computes the linear and angular velocities using unicycle dynamics"""
         #note that the controller is very sensitive to proportional gain. Choose small values for k (K <= 0.3) for less overshoot.
-
         A = [[math.cos(self.yaw), math.sin(self.yaw)],
              [(-math.sin(self.yaw)) / l, math.cos(self.yaw) / l]]
         vel = k * np.dot(A, self.single_Iterate())
         # vel should be a 2x1 array. [0][0] should be the linear velocity and [1][0] should be the angular velocity
+
         return vel
     def move2goal(self):
         """Moves the turtlebot to the goal."""
@@ -117,12 +116,10 @@ class TurtleBot:
         # If we press control + C, the node will stop.
         rospy.spin()
 
-
 if __name__ == '__main__':
     try:
         x = TurtleBot()
         x.move2goal()
-
 
     except rospy.ROSInterruptException:
         pass
