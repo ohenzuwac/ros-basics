@@ -11,7 +11,6 @@ from math import pow, atan2, sqrt
 from tf.transformations import euler_from_quaternion
 
 
-# some sort of error with order of declaring variables or calling functions? See bookmark about gtg implementation for ideas
 class TurtleBot:
 
     def __init__(self):
